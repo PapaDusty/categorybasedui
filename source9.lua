@@ -1745,6 +1745,385 @@ function mainapi:CreateGUI()
         return components.Divider(children, text)
     end
 
+    function categoryapi:CreateSettingsPane(categorysettings)
+    local optionapi = {}
+
+    local button = Instance.new('TextButton')
+    button.Name = categorysettings.Name
+    button.Size = UDim2.fromOffset(220, 40)
+    button.BackgroundColor3 = uipallet.Main
+    button.BorderSizePixel = 0
+    button.AutoButtonColor = false
+    button.Text = '          '..categorysettings.Name
+    button.TextXAlignment = Enum.TextXAlignment.Left
+    button.TextColor3 = color.Dark(uipallet.Text, 0.16)
+    button.TextSize = 14
+    button.FontFace = uipallet.Font
+    button.Parent = children
+    local arrow = Instance.new('ImageLabel')
+    arrow.Name = 'Arrow'
+    arrow.Size = UDim2.fromOffset(4, 8)
+    arrow.Position = UDim2.new(1, -20, 0, 16)
+    arrow.BackgroundTransparency = 1
+    arrow.Image = 'rbxassetid://14368316544'
+    arrow.ImageColor3 = color.Light(uipallet.Main, 0.37)
+    arrow.Parent = button
+    
+    local settingspane = Instance.new('TextButton')
+    settingspane.Size = UDim2.fromScale(1, 1)
+    settingspane.BackgroundColor3 = uipallet.Main
+    settingspane.AutoButtonColor = false
+    settingspane.Visible = false
+    settingspane.Text = ''
+    settingspane.Parent = window
+    local title = Instance.new('TextLabel')
+    title.Name = 'Title'
+    title.Size = UDim2.new(1, -36, 0, 20)
+    title.Position = UDim2.fromOffset(math.abs(title.Size.X.Offset), 11)
+    title.BackgroundTransparency = 1
+    title.Text = categorysettings.Name
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.TextColor3 = uipallet.Text
+    title.TextSize = 13
+    title.FontFace = uipallet.Font
+    title.Parent = settingspane
+    local close = addCloseButton(settingspane)
+    local back = Instance.new('ImageButton')
+    back.Name = 'Back'
+    back.Size = UDim2.fromOffset(16, 16)
+    back.Position = UDim2.fromOffset(11, 13)
+    back.BackgroundTransparency = 1
+    back.Image = 'rbxassetid://14368303894'
+    back.ImageColor3 = color.Light(uipallet.Main, 0.37)
+    back.Parent = settingspane
+    addCorner(settingspane)
+    local settingschildren = Instance.new('Frame')
+    settingschildren.Name = 'Children'
+    settingschildren.Size = UDim2.new(1, 0, 1, -57)
+    settingschildren.Position = UDim2.fromOffset(0, 41)
+    settingschildren.BackgroundColor3 = uipallet.Main
+    settingschildren.BorderSizePixel = 0
+    settingschildren.Parent = settingspane
+    local settingswindowlist = Instance.new('UIListLayout')
+    settingswindowlist.SortOrder = Enum.SortOrder.LayoutOrder
+    settingswindowlist.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    settingswindowlist.Parent = settingschildren
+
+    for i, v in components do
+        optionapi['Create'..i] = function(_, settings)
+            return v(settings, settingschildren, categoryapi)
+        end
+    end
+
+    back.MouseEnter:Connect(function()
+        back.ImageColor3 = uipallet.Text
+    end)
+    back.MouseLeave:Connect(function()
+        back.ImageColor3 = color.Light(uipallet.Main, 0.37)
+    end)
+    back.MouseButton1Click:Connect(function()
+        settingspane.Visible = false
+    end)
+    button.MouseEnter:Connect(function()
+        button.TextColor3 = uipallet.Text
+        button.BackgroundColor3 = color.Light(uipallet.Main, 0.02)
+    end)
+    button.MouseLeave:Connect(function()
+        button.TextColor3 = color.Dark(uipallet.Text, 0.16)
+        button.BackgroundColor3 = uipallet.Main
+    end)
+    button.MouseButton1Click:Connect(function()
+        settingspane.Visible = true
+    end)
+    close.MouseButton1Click:Connect(function()
+        settingspane.Visible = false
+    end)
+    
+    settingswindowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+        if mainapi.ThreadFix then
+            setthreadidentity(8)
+        end
+        settingspane.Size = UDim2.fromOffset(220, 45 + settingswindowlist.AbsoluteContentSize.Y / scale.Scale)
+    end)
+
+    return optionapi
+end
+
+function categoryapi:CreateBind()
+    local optionapi = {Bind = {'RightShift'}}
+
+    local button = Instance.new('TextButton')
+    button.Size = UDim2.fromOffset(220, 40)
+    button.BackgroundColor3 = uipallet.Main
+    button.BorderSizePixel = 0
+    button.AutoButtonColor = false
+    button.Text = '          Rebind GUI'
+    button.TextXAlignment = Enum.TextXAlignment.Left
+    button.TextColor3 = color.Dark(uipallet.Text, 0.16)
+    button.TextSize = 14
+    button.FontFace = uipallet.Font
+    button.Parent = children
+    addTooltip(button, 'Change the bind of the GUI')
+    local bind = Instance.new('TextButton')
+    bind.Name = 'Bind'
+    bind.Size = UDim2.fromOffset(20, 21)
+    bind.Position = UDim2.new(1, -10, 0, 9)
+    bind.AnchorPoint = Vector2.new(1, 0)
+    bind.BackgroundColor3 = Color3.new(1, 1, 1)
+    bind.BackgroundTransparency = 0.92
+    bind.BorderSizePixel = 0
+    bind.AutoButtonColor = false
+    bind.Text = ''
+    bind.Parent = button
+    addTooltip(bind, 'Click to bind')
+    addCorner(bind, UDim.new(0, 4))
+    local icon = Instance.new('ImageLabel')
+    icon.Name = 'Icon'
+    icon.Size = UDim2.fromOffset(12, 12)
+    icon.Position = UDim2.new(0.5, -6, 0, 5)
+    icon.BackgroundTransparency = 1
+    icon.Image = 'rbxassetid://14368304734'
+    icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
+    icon.Parent = bind
+    local label = Instance.new('TextLabel')
+    label.Name = 'Text'
+    label.Size = UDim2.fromScale(1, 1)
+    label.Position = UDim2.fromOffset(0, 1)
+    label.BackgroundTransparency = 1
+    label.Visible = false
+    label.Text = ''
+    label.TextColor3 = color.Dark(uipallet.Text, 0.43)
+    label.TextSize = 12
+    label.FontFace = uipallet.Font
+    label.Parent = bind
+
+    function optionapi:SetBind(tab)
+        mainapi.Keybind = #tab <= 0 and mainapi.Keybind or table.clone(tab)
+        self.Bind = mainapi.Keybind
+
+        bind.Visible = true
+        label.Visible = true
+        icon.Visible = false
+        label.Text = table.concat(mainapi.Keybind, ' + '):upper()
+        bind.Size = UDim2.fromOffset(math.max(getfontsize(label.Text, label.TextSize, label.Font).X + 10, 20), 21)
+    end
+
+    bind.MouseEnter:Connect(function()
+        label.Visible = false
+        icon.Visible = not label.Visible
+        icon.Image = 'rbxassetid://14368315443'
+        icon.ImageColor3 = color.Dark(uipallet.Text, 0.16)
+    end)
+    bind.MouseLeave:Connect(function()
+        label.Visible = true
+        icon.Visible = not label.Visible
+        icon.Image = 'rbxassetid://14368304734'
+        icon.ImageColor3 = color.Dark(uipallet.Text, 0.43)
+    end)
+    bind.MouseButton1Click:Connect(function()
+        mainapi.Binding = optionapi
+    end)
+
+    categoryapi.Options.Bind = optionapi
+
+    return optionapi
+end
+
+function categoryapi:CreateGUISlider(optionsettings)
+    local optionapi = {
+        Type = 'GUISlider',
+        Notch = 4,
+        Hue = 0.46,
+        Sat = 0.96,
+        Value = 0.52,
+        Rainbow = false,
+        CustomColor = false
+    }
+    
+    local slidercolors = {
+        Color3.fromRGB(250, 50, 56),
+        Color3.fromRGB(242, 99, 33),
+        Color3.fromRGB(252, 179, 22),
+        Color3.fromRGB(5, 133, 104),
+        Color3.fromRGB(47, 122, 229),
+        Color3.fromRGB(126, 84, 217),
+        Color3.fromRGB(232, 96, 152)
+    }
+    local slidercolorpos = {
+        4,
+        33,
+        62,
+        90,
+        119,
+        148,
+        177
+    }
+
+    local slider = Instance.new('TextButton')
+    slider.Name = optionsettings.Name..'Slider'
+    slider.Size = UDim2.fromOffset(220, 50)
+    slider.BackgroundTransparency = 1
+    slider.AutoButtonColor = false
+    slider.Text = ''
+    slider.Parent = children
+    local title = Instance.new('TextLabel')
+    title.Name = 'Title'
+    title.Size = UDim2.fromOffset(60, 30)
+    title.Position = UDim2.fromOffset(10, 2)
+    title.BackgroundTransparency = 1
+    title.Text = optionsettings.Name
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.TextColor3 = color.Dark(uipallet.Text, 0.16)
+    title.TextSize = 11
+    title.FontFace = uipallet.Font
+    title.Parent = slider
+    local holder = Instance.new('Frame')
+    holder.Name = 'Slider'
+    holder.Size = UDim2.fromOffset(200, 2)
+    holder.Position = UDim2.fromOffset(10, 37)
+    holder.BackgroundTransparency = 1
+    holder.BorderSizePixel = 0
+    holder.Parent = slider
+    local colornum = 0
+    for i, color in slidercolors do
+        local colorframe = Instance.new('Frame')
+        colorframe.Size = UDim2.fromOffset(27 + (((i + 1) % 2) == 0 and 1 or 0), 2)
+        colorframe.Position = UDim2.fromOffset(colornum, 0)
+        colorframe.BackgroundColor3 = color
+        colorframe.BorderSizePixel = 0
+        colorframe.Parent = holder
+        colornum += (colorframe.Size.X.Offset + 1)
+    end
+    local preview = Instance.new('ImageButton')
+    preview.Name = 'Preview'
+    preview.Size = UDim2.fromOffset(12, 12)
+    preview.Position = UDim2.new(1, -22, 0, 10)
+    preview.BackgroundTransparency = 1
+    preview.Image = 'rbxassetid://14368311578'
+    preview.ImageColor3 = Color3.fromHSV(optionapi.Hue, 1, 1)
+    preview.Parent = slider
+    local knob = Instance.new('ImageLabel')
+    knob.Name = 'Knob'
+    knob.Size = UDim2.fromOffset(26, 12)
+    knob.Position = UDim2.fromOffset(slidercolorpos[4] - 3, -5)
+    knob.BackgroundTransparency = 1
+    knob.Image = 'rbxassetid://14368320020'
+    knob.ImageColor3 = slidercolors[4]
+    knob.Parent = holder
+    
+    optionsettings.Function = optionsettings.Function or function() end
+
+    function optionapi:SetValue(h, s, v, n)
+        if n then
+            if self.Rainbow then
+                self:Toggle()
+            end
+            self.CustomColor = false
+            h, s, v = slidercolors[n]:ToHSV()
+        else
+            self.CustomColor = true
+        end
+
+        self.Hue = h or self.Hue
+        self.Sat = s or self.Sat
+        self.Value = v or self.Value
+        self.Notch = n
+        preview.ImageColor3 = Color3.fromHSV(self.Hue, self.Sat, self.Value)
+
+        if self.Rainbow or self.CustomColor then
+            knob.Image = 'rbxassetid://14368321228'
+            knob.ImageColor3 = Color3.new(1, 1, 1)
+            tween:Tween(knob, uipallet.Tween, {
+                Position = UDim2.fromOffset(slidercolorpos[4] - 3, -5)
+            })
+        else
+            knob.Image = 'rbxassetid://14368320020'
+            knob.ImageColor3 = Color3.fromHSV(self.Hue, self.Sat, self.Value)
+            tween:Tween(knob, uipallet.Tween, {
+                Position = UDim2.fromOffset(slidercolorpos[n or 4] - 3, -5)
+            })
+        end
+        optionsettings.Function(self.Hue, self.Sat, self.Value)
+    end
+
+    function optionapi:Toggle()
+        self.Rainbow = not self.Rainbow
+        if self.Rainbow then
+            table.insert(mainapi.RainbowTable, self)
+        else
+            local ind = table.find(mainapi.RainbowTable, self)
+            if ind then
+                table.remove(mainapi.RainbowTable, ind)
+            end
+            self:SetValue(nil, nil, nil, 4)
+        end
+    end
+
+    slider.InputBegan:Connect(function(inputObj)
+        if
+            (inputObj.UserInputType == Enum.UserInputType.MouseButton1 or inputObj.UserInputType == Enum.UserInputType.Touch)
+            and (inputObj.Position.Y - slider.AbsolutePosition.Y) > (20 * scale.Scale)
+        then
+            local changed = inputService.InputChanged:Connect(function(input)
+                if input.UserInputType == (inputObj.UserInputType == Enum.UserInputType.MouseButton1 and Enum.UserInputType.MouseMovement or Enum.UserInputType.Touch) then
+                    optionapi:SetValue(nil, nil, nil, math.clamp(math.round((input.Position.X - holder.AbsolutePosition.X) / scale.Scale / 27), 1, 7))
+                end
+            end)
+
+            local ended
+            ended = inputObj.Changed:Connect(function()
+                if inputObj.UserInputState == Enum.UserInputState.End then
+                    if changed then
+                        changed:Disconnect()
+                    end
+                    if ended then
+                        ended:Disconnect()
+                    end
+                end
+            end)
+            optionapi:SetValue(nil, nil, nil, math.clamp(math.round((inputObj.Position.X - holder.AbsolutePosition.X) / scale.Scale / 27), 1, 7))
+        end
+    end)
+
+    optionapi.Object = slider
+    categoryapi.Options[optionsettings.Name] = optionapi
+
+    return optionapi
+end
+
+function categoryapi:CreateOverlayBar()
+    local optionapi = {Toggles = {}}
+
+    local bar = Instance.new('Frame')
+    bar.Name = 'Overlays'
+    bar.Size = UDim2.fromOffset(220, 36)
+    bar.BackgroundColor3 = uipallet.Main
+    bar.BorderSizePixel = 0
+    bar.Parent = children
+    components.Divider(bar)
+    local button = Instance.new('ImageButton')
+    button.Size = UDim2.fromOffset(24, 24)
+    button.Position = UDim2.new(1, -29, 0, 7)
+    button.BackgroundTransparency = 1
+    button.AutoButtonColor = false
+    button.Image = 'rbxassetid://14368339581'
+    button.ImageColor3 = color.Light(uipallet.Main, 0.37)
+    button.Parent = bar
+    addCorner(button, UDim.new(1, 0))
+    addTooltip(button, 'Open overlays menu')
+
+    function optionapi:CreateToggle(togglesettings)
+        return togglesettings
+    end
+
+    mainapi.Overlays = optionapi
+
+    return optionapi
+end
+
+
+
+
     windowlist:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
         if mainapi.ThreadFix then
             setthreadidentity(8)
